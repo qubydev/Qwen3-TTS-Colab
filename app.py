@@ -573,6 +573,17 @@ def main(share, debug, colab):
     ENABLE_COLAB_MODE = colab
     
     if colab:
+        # Validate Colab environment and Drive mount before starting server
+        if not is_colab():
+            raise RuntimeError("❌ --colab flag set but not running in Colab!")
+        if not check_colab_drive():
+            raise RuntimeError(
+                "❌ --colab flag set but Google Drive is not mounted!\n"
+                "Please mount your drive first:\n"
+                "from google.colab import drive\n"
+                "drive.mount('/content/drive')"
+            )
+        print("✅ Colab environment verified - Google Drive is mounted")
         print("🔌 Colab mode enabled - models will be saved to Google Drive")
     else:
         print("💻 Local mode - models will be saved to ./models folder")
