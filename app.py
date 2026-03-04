@@ -411,7 +411,7 @@ def build_ui():
                         design_instruct = gr.Textbox(label="Voice Description", lines=3,  placeholder="Describe the voice characteristics you want...",
                             value="Speak in an incredulous tone, but with a hint of panic beginning to creep into your voice.")
                         design_btn = gr.Button("Generate with Custom Voice", variant="primary")
-                        with gr.Accordion("More options", open=False):
+                        with gr.Accordion("More options", open=True):
                             with gr.Row():
                               design_rem_silence = gr.Checkbox(label="Remove Silence", value=False)
                               design_make_subs = gr.Checkbox(label="Generate Subtitles", value=False)
@@ -497,7 +497,7 @@ def build_ui():
                             tts_instruct = gr.Textbox(label="Style Instruction (Optional)", lines=2,placeholder="e.g., Speak in a cheerful and energetic tone")
                             tts_model_size = gr.Dropdown(label="Size", choices=MODEL_SIZES, value="1.7B")
                         tts_btn = gr.Button("Generate Speech", variant="primary")
-                        with gr.Accordion("More options", open=False):
+                        with gr.Accordion("More options", open=True):
                             with gr.Row():
                               tts_rem_silence = gr.Checkbox(label="Remove Silence", value=False)
                               tts_make_subs = gr.Checkbox(label="Generate Subtitles", value=False)
