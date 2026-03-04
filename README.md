@@ -152,7 +152,45 @@ pip install -U flash-attn --no-build-isolation
 ```
 ---
 
-### 5️⃣ (Try this if **Auto Reference Voice Transcription** or **Subtitle Generation** fails in runtime)
+### 5️⃣ (Optional) Configure for Google Colab
+
+If you're running this on **Google Colab** and want to **save models to Google Drive** to avoid re-downloading:
+
+#### Mount Google Drive
+
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+#### Run with Colab Mode
+
+Use the `--colab` flag when running the app:
+
+```bash
+python app.py --colab --share --debug
+```
+
+**What this does:**
+- ✅ Models download to `/content/drive/MyDrive/qwen_models/` (persistent across sessions)
+- ✅ Models won't be re-downloaded if you run the app again
+- ❌ Error will be raised if `--colab` is set but Drive is not mounted
+
+#### Run in Standard Mode (Default)
+
+If you don't use the `--colab` flag:
+- Models download to `./models/` folder
+- Useful for local development or when you don't have Google Drive mounted
+
+```bash
+python app.py --share --debug
+```
+
+---
+
+### 6️⃣ (Try this if **Auto Reference Voice Transcription** or **Subtitle Generation** fails in runtime)
+
+### 6️⃣ (Try this if **Auto Reference Voice Transcription** or **Subtitle Generation** fails in runtime)
 
 ## Fix CTranslate2
 
@@ -207,7 +245,7 @@ You can check all official releases here:
 👉 [https://pypi.org/project/ctranslate2/](https://pypi.org/project/ctranslate2/)
 
 
-### 5️⃣ Install Project Dependencies
+### 7️⃣ Install Project Dependencies
 ```
 python app.py
 ```
@@ -217,7 +255,7 @@ python app.py
 > * **Avoid 1.7B models** (very slow / may crash)
 > * **Disable Subtitle Generation** 
 
-### 6️⃣How to delete everything
+### 8️⃣ How to delete everything
 Just delete ```Qwen3-TTS-Colab``` Folder  <br>
 For Model Go to this path on windows 
 ```C:\Users\<your_pc_user_name>\.cache\huggingface\hub```

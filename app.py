@@ -15,6 +15,47 @@ from hf_downloader import download_model
 import gc 
 from huggingface_hub import login
 
+# --- Colab Configuration ---
+ENABLE_COLAB_MODE = False  # Will be set by --colab flag
+
+def is_colab():
+    """Check if running in Google Colab."""
+    try:
+        import google.colab
+        return True
+    except ImportError:
+        return False
+
+def check_colab_drive():
+    """Check if Google Drive is mounted in Colab."""
+    if not is_colab():
+        return False
+    drive_path = "/content/drive/MyDrive"
+    if os.path.exists(drive_path) and os.path.isdir(drive_path):
+        return True
+    return False
+
+def get_model_download_folder():
+    """Get the appropriate model download folder based on Colab mode."""
+    if ENABLE_COLAB_MODE:
+        if not is_colab():
+            raise RuntimeError("❌ --colab flag set but not running in Colab!")
+        if not check_colab_drive():
+            raise RuntimeError(
+                "❌ --colab flag set but Google Drive is not mounted!\n"
+                "Please mount your drive first:\n"
+                "from google.colab import drive\n"
+                "drive.mount('/content/drive')"
+            )
+        model_folder = "/content/drive/MyDrive/qwen_models"
+        os.makedirs(model_folder, exist_ok=True)
+        return model_folder
+    else:
+        # Local mode - download to /models folder
+        model_folder = "./models"
+        os.makedirs(model_folder, exist_ok=True)
+        return model_folder
+
 HF_TOKEN = os.getenv("HF_TOKEN")
 if HF_TOKEN:
     login(token=HF_TOKEN)
@@ -35,10 +76,11 @@ LANGUAGES = ["Auto", "Chinese", "English", "Japanese", "Korean", "French", "Germ
 
 def get_model_path(model_type: str, model_size: str) -> str:
     """Get model path based on type and size."""
+    download_folder = get_model_download_folder()
     try:
-      return snapshot_download(f"Qwen/Qwen3-TTS-12Hz-{model_size}-{model_type}")
+      return snapshot_download(f"Qwen/Qwen3-TTS-12Hz-{model_size}-{model_type}", cache_dir=download_folder)
     except Exception as e:
-      return download_model(f"Qwen/Qwen3-TTS-12Hz-{model_size}-{model_type}", download_folder="./qwen_tts_model", redownload= False)
+      return download_model(f"Qwen/Qwen3-TTS-12Hz-{model_size}-{model_type}", download_folder=download_folder, redownload=False)
 
 def clear_other_models(keep_key=None):
     """Delete all loaded models except the current one."""
@@ -525,10 +567,19 @@ import click
 @click.command()
 @click.option("--debug", is_flag=True, default=False, help="Enable debug mode.")
 @click.option("--share", is_flag=True, default=False, help="Enable sharing of the interface.")
-def main(share,debug):
+@click.option("--colab", is_flag=True, default=False, help="Enable Colab mode (save models to Google Drive).")
+def main(share, debug, colab):
+    global ENABLE_COLAB_MODE
+    ENABLE_COLAB_MODE = colab
+    
+    if colab:
+        print("🔌 Colab mode enabled - models will be saved to Google Drive")
+    else:
+        print("💻 Local mode - models will be saved to ./models folder")
+    
     demo = build_ui()
     # demo.launch(share=True, debug=True)
-    demo.queue().launch(share=share,debug=debug)
+    demo.queue().launch(share=share, debug=debug)
 
 if __name__ == "__main__":
     main()    

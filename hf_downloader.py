@@ -69,7 +69,15 @@ def download_model(repo_id: str, download_folder: str = "./", redownload: bool =
 
     url = f"https://huggingface.co/api/models/{repo_id}"
     download_dir = os.path.abspath(f"{download_folder.rstrip('/')}/{repo_id.split('/')[-1]}")
-    os.makedirs(download_dir, exist_ok=True)
+    
+    try:
+        os.makedirs(download_dir, exist_ok=True)
+    except PermissionError:
+        print(f"❌ Permission Error: Cannot create directory {download_dir}")
+        return None
+    except Exception as e:
+        print(f"❌ Error creating directory {download_dir}: {e}")
+        return None
 
     print(f"📂 Download directory: {download_dir}")
 
